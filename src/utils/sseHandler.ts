@@ -32,6 +32,8 @@ export const sseHandler =
 
     res.on('close', () => {
       subscription.unsubscribe()
-      stream.end()
+      if (!stream.writableEnded) {
+        stream.end()
+      }
     })
   }
