@@ -1,12 +1,5 @@
 import { IncomingMessage, OutgoingHttpHeaders } from 'http'
-import { Transform } from 'stream'
-
-export interface MessageEvent {
-  data: string | object
-  id?: string
-  type?: string
-  retry?: number
-}
+import { MessageEvent } from '../types'
 
 const isObject = (fn: any): fn is object => fn && typeof fn === 'object'
 
@@ -32,6 +25,10 @@ interface WriteHeaders {
   writeHead?(statusCode: number, reasonPhrase?: string, headers?: OutgoingHttpHeaders): void
   writeHead?(statusCode: number, headers?: OutgoingHttpHeaders): void
   flushHeaders?(): void
+  write?(chunk: any, encoding?: BufferEncoding | (() => void), cb?: () => void): boolean
+  end?(cb?: () => void): void
+  end?(chunk: any, cb?: () => void): void
+  end?(chunk: any, encoding: BufferEncoding, cb?: () => void): void
 }
 
 export type WritableHeaderStream = NodeJS.WritableStream & WriteHeaders
@@ -48,13 +45,14 @@ export type HeaderStream = WritableHeaderStream & ReadHeaders
  * - retry
  *
  * If constructed with a HTTP Request, it will optimise the socket for streaming.
- * If this stream is piped to an HTTP Response, it will set appropriate headers.
+ * This class handles SSE formatting without depending on Node.js Transform streams.
  */
-export class SseStream extends Transform {
-  private lastEventId: number | null = null
+export class SseStream {
+  private lastEventId: number = 0
+  private destination: WritableHeaderStream | null = null
+  private isHeadersSent = false
 
   constructor(req?: IncomingMessage) {
-    super({ objectMode: true })
     if (req && req.socket) {
       req.socket.setKeepAlive(true)
       req.socket.setNoDelay(true)
@@ -62,6 +60,9 @@ export class SseStream extends Transform {
     }
   }
 
+  /**
+   * Connect to a writable stream (like HTTP Response)
+   */
   pipe<T extends WritableHeaderStream>(
     destination: T,
     options?: {
@@ -69,7 +70,9 @@ export class SseStream extends Transform {
       end?: boolean
     },
   ): T {
-    if (destination.writeHead) {
+    this.destination = destination
+
+    if (destination.writeHead && !this.isHeadersSent) {
       destination.writeHead(200, {
         ...options?.additionalHeaders,
         // See https://github.com/dunglas/mercure/blob/master/hub/subscribe.go#L124-L130
@@ -83,39 +86,86 @@ export class SseStream extends Transform {
         'X-Accel-Buffering': 'no',
       })
       destination.flushHeaders?.()
+      this.isHeadersSent = true
     }
 
-    destination.write('\n')
-    return super.pipe(destination, options)
+    // Send initial newline
+    destination.write?.('\n')
+    return destination
   }
 
-  _transform(
-    message: MessageEvent,
-    _encoding: string,
-    callback: (error?: Error | null, data?: any) => void,
-  ) {
+  /**
+   * Transform a message event into SSE format
+   */
+  private formatMessage(message: MessageEvent): string {
     let data = message.type ? `event: ${message.type}\n` : ''
     data += message.id ? `id: ${message.id}\n` : ''
     data += message.retry ? `retry: ${message.retry}\n` : ''
     data += message.data ? toDataString(message.data) : ''
     data += '\n'
-    this.push(data)
-    callback()
+    return data
   }
 
   /**
-   * Calls `.write` but handles the drain if needed
+   * Write a message to the connected destination
    */
-  writeMessage(message: MessageEvent, cb: (error: Error | null | undefined) => void) {
-    if (!message.id) {
-      this.lastEventId!++
-      message.id = this.lastEventId!.toString()
+  write(message: MessageEvent): boolean {
+    if (!this.destination) {
+      throw new Error('No destination connected. Call pipe() first.')
     }
 
-    if (!this.write(message, 'utf-8')) {
-      this.once('drain', cb)
+    if (!message.id) {
+      this.lastEventId++
+      message.id = this.lastEventId.toString()
+    }
+
+    const formattedMessage = this.formatMessage(message)
+    return this.destination.write?.(formattedMessage) ?? false
+  }
+
+  /**
+   * Write a message with callback handling (similar to the original writeMessage)
+   */
+  writeMessage(message: MessageEvent, cb: (error: Error | null | undefined) => void): void {
+    if (!this.destination) {
+      process.nextTick(() => cb(new Error('No destination connected. Call pipe() first.')))
+      return
+    }
+
+    if (!message.id) {
+      this.lastEventId++
+      message.id = this.lastEventId.toString()
+    }
+
+    const formattedMessage = this.formatMessage(message)
+
+    if (!this.destination.write?.(formattedMessage)) {
+      // If write returns false, wait for drain event
+      this.destination.once?.('drain', cb)
     } else {
       process.nextTick(cb)
     }
+  }
+
+  /**
+   * End the stream
+   */
+  end(cb?: () => void): void {
+    if (this.destination) {
+      this.destination.end?.(cb)
+    } else if (cb) {
+      process.nextTick(cb)
+    }
+  }
+
+  /**
+   * Get the formatted SSE string for a message (utility method)
+   */
+  formatMessageToString(message: MessageEvent): string {
+    if (!message.id) {
+      this.lastEventId++
+      message.id = this.lastEventId.toString()
+    }
+    return this.formatMessage(message)
   }
 }

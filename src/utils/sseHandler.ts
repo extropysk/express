@@ -1,6 +1,7 @@
 import type { Response, Request as ExpressRequest } from 'express'
 import { catchError, concatMap, EMPTY, Observable } from 'rxjs'
-import { SseStream, MessageEvent } from './sse'
+import { SseStream } from './sse'
+import { MessageEvent } from '../types'
 
 export const sseHandler =
   (observable: Observable<MessageEvent>) => (req: ExpressRequest, res: Response) => {
@@ -31,8 +32,6 @@ export const sseHandler =
 
     res.on('close', () => {
       subscription.unsubscribe()
-      if (!stream.writableEnded) {
-        stream.end()
-      }
+      stream.end()
     })
   }
