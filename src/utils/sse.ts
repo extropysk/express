@@ -30,8 +30,9 @@ interface WriteHeaders {
 export type WritableHeaderStream = NodeJS.WritableStream & WriteHeaders
 export type HeaderStream = WritableHeaderStream & ReadHeaders
 
-export const createSseStream = async (req: IncomingMessage) => {
-  const { Transform } = await import('stream')
+export const createSseStream = (req: IncomingMessage) => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { Transform } = require('stream')
 
   class SseStream extends Transform {
     lastEventId: number | null = null

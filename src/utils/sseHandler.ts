@@ -4,8 +4,8 @@ import { createSseStream } from './sse'
 import { MessageEvent } from '../types'
 
 export const sseHandler =
-  (observable: Observable<MessageEvent>) => async (req: ExpressRequest, res: Response) => {
-    const stream = await createSseStream(req)
+  (observable: Observable<MessageEvent>) => (req: ExpressRequest, res: Response) => {
+    const stream = createSseStream(req)
     stream.pipe(res)
 
     const subscription = observable
