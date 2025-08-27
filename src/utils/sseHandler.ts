@@ -1,11 +1,11 @@
 import type { Response, Request as ExpressRequest } from 'express'
 import { catchError, concatMap, EMPTY, Observable } from 'rxjs'
-import { SseStream } from './sse'
+import { createSseStream } from './sse'
 import { MessageEvent } from '../types'
 
 export const sseHandler =
-  (observable: Observable<MessageEvent>) => (req: ExpressRequest, res: Response) => {
-    const stream = new SseStream(req)
+  (observable: Observable<MessageEvent>) => async (req: ExpressRequest, res: Response) => {
+    const stream = await createSseStream(req)
     stream.pipe(res)
 
     const subscription = observable
