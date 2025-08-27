@@ -8,6 +8,9 @@ const formattedName = name.match(/[^/]+$/)?.[0] ?? name
 export default defineConfig({
   plugins: [dts()],
   build: {
+    rollupOptions: {
+      external: ['http', 'stream'],
+    },
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: formattedName,
