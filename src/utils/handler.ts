@@ -52,7 +52,7 @@ export const handler = <B, Q extends ParsedQs = ParsedQs, U = any, R = unknown>(
         res.status(error.status).json({ message: error.message })
       } else {
         const status = error.status ?? 500
-        const message = error.isPublic & error.message ? error.message : 'Internal Server Error'
+        const message = error.isPublic && error.message ? error.message : 'Internal Server Error'
         res.status(status).json({ message })
       }
     }
