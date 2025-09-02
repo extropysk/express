@@ -1,4 +1,4 @@
-import { AccessArgs, AccessResult, FieldAccess, PayloadUser } from '../types'
+import { AccessArgs, AccessResult, FieldAccess, User } from '../types'
 import { getIdFromObject } from '../utils'
 
 export enum Action {
@@ -17,11 +17,6 @@ interface Group {
   [key: string]: unknown
 }
 
-interface User extends PayloadUser {
-  permissions?: Permission[]
-  roles?: null | unknown[]
-}
-
 export interface Permission {
   action: Action | string
   subject: string
@@ -29,7 +24,7 @@ export interface Permission {
 
 interface Args {
   adminRole: string
-  getCurrentTenant?: (user?: PayloadUser, cookie?: string) => null | string
+  getCurrentTenant?: (user?: User, cookie?: string) => null | string
   getRolePermissions: (role: unknown) => Permission[]
   tenants?: {
     arrayField: string
@@ -161,7 +156,8 @@ export class Guard {
     }
 
     return roles.some(role => {
-      return user?.roles?.some(individualRole => {
+      const userRoles = (user?.roles ?? []) as string[]
+      return userRoles.some(individualRole => {
         return individualRole === role
       })
     })

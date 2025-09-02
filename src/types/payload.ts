@@ -4,7 +4,7 @@ export type TypeWithID = {
   id: number | string
 }
 
-export type PayloadUser = {
+export type User = {
   [key: string]: unknown
   collection: string
   email: string
@@ -12,7 +12,7 @@ export type PayloadUser = {
 }
 
 export type PayloadRequest<U = any> = Request & {
-  user: (U & PayloadUser) | null
+  user: (U & User) | null
   locale?: string
   context: Record<string, unknown>
 }
