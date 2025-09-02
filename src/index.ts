@@ -1,3 +1,5 @@
-export * from './utils'
+export * from './handlers'
 export * from './types'
 export * from './errors'
+export * from './utils'
+export * from './access'

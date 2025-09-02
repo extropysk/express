@@ -1,6 +1,10 @@
 import type { Request } from 'express'
 
-export type User = {
+export type TypeWithID = {
+  id: number | string
+}
+
+export type PayloadUser = {
   [key: string]: unknown
   collection: string
   email: string
@@ -8,21 +12,14 @@ export type User = {
 }
 
 export type PayloadRequest<U = any> = Request & {
-  user: (U & User) | null
+  user: (U & PayloadUser) | null
   locale?: string
   context: Record<string, unknown>
 }
 
 export type AccessArgs<T = any, U = any> = {
-  /**
-   * The relevant resource that is being accessed.
-   *
-   * `data` is null when a list is requested
-   */
   data?: T
-  /** ID of the resource being accessed */
   id?: number | string
-  /** The original request that requires an access check */
   req: PayloadRequest<U>
 }
 
@@ -51,8 +48,10 @@ export type WhereField = {
 }
 
 export type Where = {
-  [key: string]: Where[] | WhereField | undefined
+  [key: string]: Where[] | WhereField
+  // @ts-expect-error payload
   and?: Where[]
+  // @ts-expect-error payload
   or?: Where[]
 }
 
@@ -61,3 +60,11 @@ export type AccessResult = Where | boolean
 export type Access<T = any, U = any> = (
   args: AccessArgs<T, U>,
 ) => AccessResult | Promise<AccessResult>
+
+export type FieldAccess<T extends TypeWithID = any, P = any, U = any> = (args: {
+  data?: Partial<T>
+  doc?: T
+  id?: number | string
+  req: PayloadRequest<U>
+  siblingData?: Partial<P>
+}) => Promise<boolean> | boolean
