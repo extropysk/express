@@ -13,6 +13,7 @@ import {
 } from 'rxjs'
 import { distinctUntilChanged, map, mergeMap, take } from 'rxjs/operators'
 import {
+  ClientOptions,
   IdentitySerializer,
   PacketId,
   ProducerDeserializer,
@@ -23,10 +24,6 @@ import {
 import { isNil, MsPattern, randomStringGenerator, transformPatternToRoute } from '../../utils'
 import { InvalidMessageException } from '../errors'
 import { IncomingResponseDeserializer } from '../deserializers'
-
-export type ClientOptions = {
-  options?: Record<string, any>
-}
 
 /**
  * @publicApi
@@ -57,13 +54,13 @@ export abstract class ClientProxy<
   public abstract close(): any
   /**
    * Registers an event listener for the given event.
-   * @param event Event name
-   * @param callback Callback to be executed when the event is emitted
+   * @param _event Event name
+   * @param _callback Callback to be executed when the event is emitted
    */
   public on<
     EventKey extends keyof EventsMap = keyof EventsMap,
     EventCallback extends EventsMap[EventKey] = EventsMap[EventKey],
-  >(event: EventKey, callback: EventCallback) {
+  >(_event: EventKey, _callback: EventCallback) {
     throw new Error('Method not implemented.')
   }
   /**

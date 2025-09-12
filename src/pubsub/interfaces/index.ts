@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs'
+
 export interface PacketId {
   id: string
 }
@@ -42,4 +44,39 @@ export class IdentitySerializer implements Serializer {
   serialize(value: any) {
     return value
   }
+}
+
+export type ClientOptions = {
+  options?: Record<string, any>
+}
+
+/**
+ * @publicApi
+ */
+export interface MessageHandler<TInput = any, TContext = any, TResult = any> {
+  (data: TInput, ctx?: TContext): Promise<Observable<TResult>> | Promise<TResult>
+  next?: (data: TInput, ctx?: TContext) => Promise<Observable<TResult>> | Promise<TResult>
+  isEventHandler?: boolean
+  extras?: Record<string, any>
+}
+
+export type TransportId = symbol
+
+/**
+ * @publicApi
+ */
+export interface CustomTransportStrategy {
+  /**
+   * Unique transport identifier.
+   */
+  transportId?: TransportId
+  /**
+   * Method called when the transport is being initialized.
+   * @param callback Function to be called upon initialization
+   */
+  listen(callback: (...optionalParams: unknown[]) => any): any
+  /**
+   * Method called when the transport is being terminated.
+   */
+  close(): any
 }
