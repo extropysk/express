@@ -1,5 +1,5 @@
-import { AccessArgs, AccessResult, FieldAccess, User } from '../types'
-import { getIdFromObject } from '../utils'
+import { AccessArgs, AccessResult, FieldAccess, User } from '@/types'
+import { getIdFromObject } from '@/utils'
 
 export enum Action {
   NONE = 0,

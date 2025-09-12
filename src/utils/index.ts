@@ -1,1 +1,5 @@
 export * from './object'
+export * from './shared'
+export * from './string'
+export * from './route'
+export * from './package'

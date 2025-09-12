@@ -1,7 +1,6 @@
 import { IncomingMessage, OutgoingHttpHeaders } from 'http'
-import { MessageEvent } from '../types'
-
-const isObject = (fn: any): fn is object => fn && typeof fn === 'object'
+import { MessageEvent } from '@/types'
+import { isObject, loadPackage } from '@/utils'
 
 function toDataString(data: string | object): string {
   if (isObject(data)) {
@@ -31,8 +30,7 @@ export type WritableHeaderStream = NodeJS.WritableStream & WriteHeaders
 export type HeaderStream = WritableHeaderStream & ReadHeaders
 
 export const createSseStream = (req: IncomingMessage) => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { Transform } = require('stream')
+  const { Transform } = loadPackage('stream', 'sse')
 
   class SseStream extends Transform {
     lastEventId: number | null = null

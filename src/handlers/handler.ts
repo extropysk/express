@@ -1,9 +1,10 @@
 import { ParsedQs } from 'qs'
-import { Access, PayloadRequest } from '../types'
+import { Access, PayloadRequest } from '@/types'
 import type z from 'zod'
 import type { Response } from 'express'
-import { ApiError } from '../errors'
+
 import { ZodError } from 'zod'
+import { ApiError } from '@/errors'
 
 interface Request<B, Q extends ParsedQs = ParsedQs, U = any> extends PayloadRequest<U> {
   body: B

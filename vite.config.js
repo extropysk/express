@@ -6,7 +6,16 @@ import { name } from './package.json'
 const formattedName = name.match(/[^/]+$/)?.[0] ?? name
 
 export default defineConfig({
-  plugins: [dts()],
+  plugins: [
+    dts({
+      exclude: ['src/test/**'],
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
