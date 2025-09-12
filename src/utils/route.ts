@@ -1,4 +1,4 @@
-import { isNumber, isObject, isString } from './shared'
+import { isNumber, isObject, isString } from '@/utils/shared'
 
 export type MsFundamentalPattern = string | number
 

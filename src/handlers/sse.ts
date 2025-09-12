@@ -1,6 +1,6 @@
 import { IncomingMessage, OutgoingHttpHeaders } from 'http'
-import { MessageEvent } from '../types'
-import { isObject, loadPackage } from '../utils'
+import { MessageEvent } from '@/types'
+import { isObject, loadPackage } from '@/utils'
 
 function toDataString(data: string | object): string {
   if (isObject(data)) {

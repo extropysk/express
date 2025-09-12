@@ -4,8 +4,8 @@ import {
   IncomingRequest,
   IncomingResponse,
   ProducerDeserializer,
-} from '../interfaces'
-import { isUndefined } from '../../utils'
+} from '@/pubsub/interfaces'
+import { isUndefined } from '@/utils'
 
 /**
  * @publicApi

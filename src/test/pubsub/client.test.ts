@@ -1,5 +1,6 @@
+import { PubSubClient } from '@/test/pubsub/client'
 import { timeout, TimeoutError } from 'rxjs'
-import { PubSubClient } from './client'
+
 import { describe, it, expect, vi } from 'vitest'
 
 describe('PubSubClient', () => {

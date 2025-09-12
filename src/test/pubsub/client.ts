@@ -1,4 +1,4 @@
-import { ClientProxy, ReadPacket, WritePacket } from '../..'
+import { ClientProxy, ReadPacket, WritePacket } from '@/index'
 
 export class PubSubClient extends ClientProxy {
   async connect(): Promise<any> {

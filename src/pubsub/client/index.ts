@@ -20,10 +20,10 @@ import {
   ProducerSerializer,
   ReadPacket,
   WritePacket,
-} from '../interfaces'
-import { isNil, MsPattern, randomStringGenerator, transformPatternToRoute } from '../../utils'
-import { InvalidMessageException } from '../errors'
-import { IncomingResponseDeserializer } from '../deserializers'
+} from '@/pubsub/interfaces'
+import { isNil, MsPattern, randomStringGenerator, transformPatternToRoute } from '@/utils'
+import { InvalidMessageException } from '@/pubsub/errors'
+import { IncomingResponseDeserializer } from '@/pubsub/deserializers'
 
 /**
  * @publicApi

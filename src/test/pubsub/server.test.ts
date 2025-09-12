@@ -1,8 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 
 import { of } from 'rxjs'
-import { PubSubServer } from './server'
-import { BaseRpcContext } from '../..'
+
+import { BaseRpcContext } from '@/index'
+import { PubSubServer } from '@/test/pubsub/server'
 
 describe('PubSubServer', () => {
   const server = new PubSubServer()

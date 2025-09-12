@@ -23,9 +23,9 @@ import {
   ReadPacket,
   TransportId,
   WritePacket,
-} from '../interfaces'
-import { loadPackage, MsPattern, transformPatternToRoute } from '../../utils'
-import { IncomingRequestDeserializer } from '../deserializers'
+} from '@/pubsub/interfaces'
+import { loadPackage, MsPattern, transformPatternToRoute } from '@/utils'
+import { IncomingRequestDeserializer } from '@/pubsub/deserializers'
 
 export type MicroserviceOptions = {
   strategy: CustomTransportStrategy

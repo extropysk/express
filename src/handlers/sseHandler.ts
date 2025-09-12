@@ -1,7 +1,7 @@
 import type { Response, Request as ExpressRequest } from 'express'
 import { catchError, concatMap, EMPTY, Observable } from 'rxjs'
-import { createSseStream } from './sse'
-import { MessageEvent } from '../types'
+import { createSseStream } from '@/handlers/sse'
+import { MessageEvent } from '@/types'
 
 export const sseHandler =
   (observable: Observable<MessageEvent>) => (req: ExpressRequest, res: Response) => {

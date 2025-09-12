@@ -1,4 +1,4 @@
-import { TypeWithID } from '../types'
+import { TypeWithID } from '@/types'
 
 type ExtractIdType<T> = T extends TypeWithID
   ? T['id']
