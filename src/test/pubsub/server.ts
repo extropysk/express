@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { CustomTransportStrategy, Server } from '@/pubsub'
+import { Server, CustomTransportStrategy } from '@/index'
 
 export class PubSubServer extends Server implements CustomTransportStrategy {
   /**

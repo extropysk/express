@@ -20,10 +20,15 @@ import {
   ProducerSerializer,
   ReadPacket,
   WritePacket,
-} from '@/pubsub/interfaces'
+} from '@/types'
 import { isNil, MsPattern, randomStringGenerator, transformPatternToRoute } from '@/utils'
-import { InvalidMessageException } from '@/pubsub/errors'
 import { IncomingResponseDeserializer } from '@/pubsub/deserializers'
+
+export class InvalidMessageException extends Error {
+  constructor() {
+    super(`The invalid data or message pattern (undefined/null)`)
+  }
+}
 
 /**
  * @publicApi

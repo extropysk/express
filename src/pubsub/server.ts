@@ -23,7 +23,7 @@ import {
   ReadPacket,
   TransportId,
   WritePacket,
-} from '@/pubsub/interfaces'
+} from '@/types'
 import { loadPackage, MsPattern, transformPatternToRoute } from '@/utils'
 import { IncomingRequestDeserializer } from '@/pubsub/deserializers'
 

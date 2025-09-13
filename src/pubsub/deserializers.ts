@@ -4,7 +4,7 @@ import {
   IncomingRequest,
   IncomingResponse,
   ProducerDeserializer,
-} from '@/pubsub/interfaces'
+} from '@/types'
 import { isUndefined } from '@/utils'
 
 /**
