@@ -1,9 +1,42 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import { describe, it, expect, vi } from 'vitest'
 
 import { of } from 'rxjs'
+import { BaseRpcContext, Server } from '@/pubsub/server'
+import { CustomTransportStrategy } from '@/types/pubsub'
 
-import { BaseRpcContext } from '@/index'
-import { PubSubServer } from '@/test/pubsub/server'
+export class PubSubServer extends Server implements CustomTransportStrategy {
+  /**
+   * Triggered when you run "app.listen()".
+   */
+  listen(callback: () => void) {
+    callback()
+  }
+
+  /**
+   * Triggered on application shutdown.
+   */
+  close() {}
+
+  /**
+   * You can ignore this method if you don't want transporter users
+   * to be able to register event listeners. Most custom implementations
+   * will not need this.
+   */
+  on(_event: string, _callback: Function) {
+    throw new Error('Method not implemented.')
+  }
+
+  /**
+   * You can ignore this method if you don't want transporter users
+   * to be able to retrieve the underlying native server. Most custom implementations
+   * will not need this.
+   */
+  unwrap<T = never>(): T {
+    throw new Error('Method not implemented.')
+  }
+}
 
 describe('PubSubServer', () => {
   const server = new PubSubServer()

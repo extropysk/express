@@ -8,7 +8,7 @@ const formattedName = name.match(/[^/]+$/)?.[0] ?? name
 export default defineConfig({
   plugins: [
     dts({
-      exclude: ['src/test/**'],
+      exclude: ['**/*.test.ts'],
     }),
   ],
   resolve: {
