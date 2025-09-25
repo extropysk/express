@@ -9,6 +9,10 @@ export interface Job<DataType> {
   name: string
 }
 
+export type QueuesFromMap<T extends Record<string, JobData>> = {
+  [K in keyof T]: BaseQueue<T[K]>
+}
+
 export abstract class BaseQueue<DataType extends JobData> {
   abstract add(data: DataType): Promise<void>
 }
@@ -33,4 +37,16 @@ export abstract class BaseWorker<DataType extends JobData> {
 export abstract class QueueProvider {
   abstract createQueue<DataType extends JobData>(name: string): BaseQueue<DataType>
   abstract registerWorker<DataType extends JobData>(worker: BaseWorker<DataType>): void
+
+  createQueues<T extends Record<string, any> = Record<string, any>>(
+    names: readonly (keyof T)[],
+  ): { [K in keyof T]: BaseQueue<T[K]> } {
+    return names.reduce(
+      (acc, name) => {
+        acc[name] = this.createQueue<T[typeof name]>(name as string)
+        return acc
+      },
+      {} as { [K in keyof T]: BaseQueue<T[K]> },
+    )
+  }
 }
