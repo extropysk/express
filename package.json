@@ -1,5 +1,5 @@
 {
-  "name": "@extropysk/express",
+  "name": "@extropysk/express-core",
   "version": "1.0.0",
   "private": false,
   "publishConfig": {
@@ -7,14 +7,14 @@
   },
   "license": "MIT",
   "type": "module",
-  "main": "./dist/express.umd.cjs",
-  "module": "./dist/express.js",
+  "main": "./dist/express-core.umd.cjs",
+  "module": "./dist/express-core.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/express.js",
-      "require": "./dist/express.umd.cjs"
+      "import": "./dist/express-core.js",
+      "require": "./dist/express-core.umd.cjs"
     }
   },
   "scripts": {
