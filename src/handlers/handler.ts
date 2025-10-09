@@ -6,13 +6,10 @@ import type { Response } from 'express'
 
 import { ZodError } from 'zod'
 import { ApiError } from '@/errors'
-import { AwilixContainer } from 'awilix'
 
-export interface BaseRequest<B = any, Q extends ParsedQs = ParsedQs, U = any>
-  extends PayloadRequest<U> {
+interface Request<B = any, Q extends ParsedQs = ParsedQs, U = any> extends PayloadRequest<U> {
   body: B
   query: Q
-  container: AwilixContainer
 }
 
 interface Options<
@@ -31,7 +28,7 @@ export function handler<
   R = unknown,
 >(
   callback: (
-    req: BaseRequest<
+    req: Request<
       BSchema extends z.ZodTypeAny ? z.infer<BSchema> : unknown,
       QSchema extends z.ZodTypeAny ? z.infer<QSchema> : ParsedQs,
       U
@@ -39,7 +36,7 @@ export function handler<
   ) => Promise<R>,
   { access, querySchema, schema }: Options<BSchema, QSchema> = {},
 ) {
-  return async (req: BaseRequest, res: Response) => {
+  return async (req: Request, res: Response) => {
     const id = req.params.id
 
     try {
@@ -60,7 +57,7 @@ export function handler<
         req.body = schema.parse(req.body)
       }
 
-      const typedReq = req as BaseRequest<
+      const typedReq = req as Request<
         BSchema extends z.ZodTypeAny ? z.infer<BSchema> : unknown,
         QSchema extends z.ZodTypeAny ? z.infer<QSchema> : ParsedQs,
         U
