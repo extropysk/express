@@ -15,6 +15,7 @@ export type PayloadRequest<U = any> = Request & {
   user: (U & User) | null
   locale?: string
   context: Record<string, unknown>
+  payload: any
 }
 
 export type AccessArgs<T = any, U = any> = {

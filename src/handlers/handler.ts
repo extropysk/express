@@ -1,4 +1,3 @@
-import { ParsedQs } from 'qs'
 import { Access, PayloadRequest } from '@/types'
 
 import type z from 'zod'
@@ -6,8 +5,15 @@ import type { Response } from 'express'
 
 import { ZodError } from 'zod'
 import { ApiError } from '@/errors'
+import { AwilixContainer } from 'awilix'
 
-interface Request<B = any, Q extends ParsedQs = ParsedQs, U = any> extends PayloadRequest<U> {
+type ParsedQs = Record<string, string>
+
+interface BaseRequest<U> extends PayloadRequest<U> {
+  container: AwilixContainer
+}
+
+export interface Request<B = any, Q extends ParsedQs = ParsedQs, U = any> extends BaseRequest<U> {
   body: B
   query: Q
 }
@@ -36,7 +42,7 @@ export function handler<
   ) => Promise<R>,
   { access, querySchema, schema }: Options<BSchema, QSchema> = {},
 ) {
-  return async (req: Request, res: Response) => {
+  return async (req: PayloadRequest, res: Response) => {
     const id = req.params.id
 
     try {
