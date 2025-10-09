@@ -5,10 +5,12 @@ import type { Response } from 'express'
 
 import { ZodError } from 'zod'
 import { ApiError } from '@/errors'
+import { AwilixContainer } from 'awilix'
 
 interface Request<B, Q extends ParsedQs = ParsedQs, U = any> extends PayloadRequest<U> {
   body: B
   query: Q
+  container: AwilixContainer
 }
 
 type Callback<B, Q extends ParsedQs, U, R> = (req: Request<B, Q, U>) => Promise<R>
