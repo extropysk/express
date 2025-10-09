@@ -1,5 +1,6 @@
 import { ParsedQs } from 'qs'
 import { Access, PayloadRequest } from '@/types'
+
 import type z from 'zod'
 import type { Response } from 'express'
 
@@ -7,25 +8,38 @@ import { ZodError } from 'zod'
 import { ApiError } from '@/errors'
 import { AwilixContainer } from 'awilix'
 
-interface Request<B, Q extends ParsedQs = ParsedQs, U = any> extends PayloadRequest<U> {
+export interface BaseRequest<B = any, Q extends ParsedQs = ParsedQs, U = any>
+  extends PayloadRequest<U> {
   body: B
   query: Q
   container: AwilixContainer
 }
 
-type Callback<B, Q extends ParsedQs, U, R> = (req: Request<B, Q, U>) => Promise<R>
-
-interface Options {
+interface Options<
+  BSchema extends z.ZodTypeAny | undefined = undefined,
+  QSchema extends z.ZodTypeAny | undefined = undefined,
+> {
   access?: Access
-  querySchema?: z.AnyZodObject
-  schema?: z.AnyZodObject
+  querySchema?: QSchema
+  schema?: BSchema
 }
 
-export const handler = <B, Q extends ParsedQs = ParsedQs, U = any, R = unknown>(
-  callback: Callback<B, Q, U, R>,
-  { access, querySchema, schema }: Options = {},
-) => {
-  return async (req: Request<B, Q, U>, res: Response) => {
+export function handler<
+  BSchema extends z.ZodTypeAny | undefined = undefined,
+  QSchema extends z.ZodTypeAny | undefined = undefined,
+  U = any,
+  R = unknown,
+>(
+  callback: (
+    req: BaseRequest<
+      BSchema extends z.ZodTypeAny ? z.infer<BSchema> : unknown,
+      QSchema extends z.ZodTypeAny ? z.infer<QSchema> : ParsedQs,
+      U
+    >,
+  ) => Promise<R>,
+  { access, querySchema, schema }: Options<BSchema, QSchema> = {},
+) {
+  return async (req: BaseRequest, res: Response) => {
     const id = req.params.id
 
     try {
@@ -39,14 +53,19 @@ export const handler = <B, Q extends ParsedQs = ParsedQs, U = any, R = unknown>(
       }
 
       if (querySchema) {
-        req.query = querySchema.parse(req.query) as Q
+        req.query = querySchema.parse(req.query)
       }
 
       if (schema) {
-        req.body = schema.parse(req.body) as B
+        req.body = schema.parse(req.body)
       }
 
-      const data = await callback(req)
+      const typedReq = req as BaseRequest<
+        BSchema extends z.ZodTypeAny ? z.infer<BSchema> : unknown,
+        QSchema extends z.ZodTypeAny ? z.infer<QSchema> : ParsedQs,
+        U
+      >
+      const data = await callback(typedReq)
       res.json(data)
     } catch (error: any) {
       if (error instanceof ZodError) {
