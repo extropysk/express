@@ -19,3 +19,24 @@ export class ApiError extends ExtendableError {
     super(key, status, data, true)
   }
 }
+
+export class CustomError<TData extends Obj = Obj> extends Error {
+  readonly data?: TData
+  readonly innerError?: Error
+
+  public constructor(message: string, error?: unknown, data?: TData) {
+    super(message)
+
+    // Required: restore prototype chain
+    Object.setPrototypeOf(this, new.target.prototype)
+
+    this.name = 'CustomError'
+    this.innerError = error as Error
+    this.data = data
+
+    // Preserve stack trace
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor)
+    }
+  }
+}
