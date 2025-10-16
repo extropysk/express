@@ -5,7 +5,7 @@ const MISSING_REQUIRED_DEPENDENCY = (name: string, reason: string) =>
 
 export function loadPackage(packageName: string, context: string, loaderFn?: Function) {
   try {
-    return loaderFn ? loaderFn() : require(packageName)
+    return loaderFn ? loaderFn() : require(/* webpackIgnore: true */ packageName)
   } catch (e) {
     console.error(MISSING_REQUIRED_DEPENDENCY(packageName, context))
     process.exit(1)
