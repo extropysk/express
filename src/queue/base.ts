@@ -9,10 +9,6 @@ export interface Job<DataType> {
   name: string
 }
 
-export type QueuesFromMap<T extends Record<string, JobData>> = {
-  [K in keyof T]: BaseQueue<T[K]>
-}
-
 export abstract class BaseQueue<DataType extends JobData> {
   abstract add(data: DataType): Promise<void>
 }
