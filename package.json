@@ -46,6 +46,7 @@
     "zod": "^3.23.8"
   },
   "dependencies": {
+    "lru-cache": "^11.2.2",
     "uid": "^2.0.2"
   },
   "files": [
