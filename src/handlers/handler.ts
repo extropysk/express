@@ -71,11 +71,12 @@ export function handler<
       const data = await callback(typedReq)
       res.json(data)
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error.name === 'ZodError' || error instanceof ZodError) {
         res.status(400).json({ errors: error.issues })
       } else if (error instanceof ApiError) {
         res.status(error.status).json({ message: error.message })
       } else {
+        console.error(error)
         const status = error.status ?? 500
         const message = error.isPublic && error.message ? error.message : 'Internal Server Error'
         res.status(status).json({ message })
