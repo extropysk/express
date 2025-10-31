@@ -28,9 +28,9 @@ interface Options<
 }
 
 export function handler<
+  U = any,
   BSchema extends z.ZodTypeAny | undefined = undefined,
   QSchema extends z.ZodTypeAny | undefined = undefined,
-  U = any,
   R = unknown,
 >(
   callback: (
