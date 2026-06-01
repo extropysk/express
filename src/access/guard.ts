@@ -23,7 +23,7 @@ export interface Permission {
 }
 
 interface Args {
-  adminRole: string
+  adminRole?: string
   getCurrentTenant?: (user?: User, cookie?: string) => null | string
   getRolePermissions: (role: unknown) => Permission[]
   tenants?: {
@@ -65,8 +65,12 @@ export class Guard {
     return action > 0
   }
 
+  getAdminRole = () => {
+    return this.args.adminRole ?? 'admin'
+  }
+
   checkAdmin = (user: User | null) => {
-    return this.checkRole([this.args.adminRole], user)
+    return this.checkRole([this.getAdminRole()], user)
   }
 
   checkFieldPermission =
@@ -176,6 +180,10 @@ export class Guard {
       const groupId = group[arrayGroupField] as string
       return getIdFromObject(groupId)
     })
+  }
+
+  admin = ({ req: { user } }: AccessArgs<unknown, User>) => {
+    return this.checkAdmin(user)
   }
 
   isHidden =
