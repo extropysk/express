@@ -5,6 +5,7 @@ export interface JobData {
 }
 
 export interface Job<DataType> {
+  id?: string
   data: DataType
   name: string
 }

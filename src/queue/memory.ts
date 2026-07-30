@@ -1,5 +1,6 @@
 import { catchError, mergeMap, Subject } from 'rxjs'
 import { BaseQueue, BaseWorker, Job, JobData, QueueProvider } from '@/queue/base'
+import { randomStringGenerator } from '@/utils/string'
 
 class MemoryQueue<DataType extends JobData> extends BaseQueue<DataType> {
   private subject = new Subject<Job<DataType>>()
@@ -10,6 +11,7 @@ class MemoryQueue<DataType extends JobData> extends BaseQueue<DataType> {
 
   async add(data: DataType): Promise<void> {
     const job: Job<DataType> = {
+      id: randomStringGenerator(),
       data,
       name: this.name,
     }
